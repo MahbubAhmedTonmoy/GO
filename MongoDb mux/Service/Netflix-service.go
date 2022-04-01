@@ -5,6 +5,7 @@ import (
 	"fmt"
 	model "go-rest-api-db/Model"
 	"log"
+	"reflect"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -13,7 +14,8 @@ import (
 )
 
 type NetflixService interface {
-	Insert(model.Netflix)
+	Insert(model interface{})
+	//Insert(movie model.Netflix)
 	Update(movieId string)
 	Delete(movieId string)
 	DeleteAll() int64
@@ -44,12 +46,24 @@ func NewNetflixService(ConnectionString string, dbName string, collectionName st
 
 //connect with mongodb only 1 time and very 1st time init
 
-func (s *netflixService) Insert(movie model.Netflix) {
-	result, err := s.collection.InsertOne(context.Background(), movie)
-	if err != nil {
-		log.Fatal(err)
+// func (s *netflixService) Insert(movie model.Netflix) {
+// 	result, err := s.collection.InsertOne(context.Background(), movie)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	fmt.Println("Inserted 1 movie in db with id: ", result.InsertedID)
+// }
+
+func (s *netflixService) Insert(m interface{}) {
+	T := reflect.TypeOf(m)
+	switch T {
+	case reflect.TypeOf(model.Netflix{}):
+		result, err := s.collection.InsertOne(context.Background(), m)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("Inserted 1 movie in db with id: ", result.InsertedID)
 	}
-	fmt.Println("Inserted 1 movie in db with id: ", result.InsertedID)
 }
 
 func (s *netflixService) Update(movieId string) {
