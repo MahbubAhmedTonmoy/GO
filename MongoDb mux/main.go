@@ -10,9 +10,12 @@ import (
 
 func main() {
 	fmt.Println("MongoDB API")
-	service.LoadAppConfig()
+	conf, err := service.NewConfig("./service/config.yaml")
+	if err != nil {
+		log.Fatal(err)
+	}
 	r := router.Router()
 	fmt.Println("Server is getting started...")
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", service.AppConfig.Port), r))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", conf.Database.Port), r))
 	fmt.Println("Listening at port 8000 ...")
 }

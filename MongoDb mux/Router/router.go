@@ -7,8 +7,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const ConnectionString = "mongodb://localhost:27017"
+const dbName = "netflix"
+const collcetionName = "watchlist"
+
 var (
-	s service.NetflixService       = service.NewNetflixService()
+	s service.NetflixService       = service.NewNetflixService(ConnectionString, dbName, collcetionName)
 	c controller.NetflixController = controller.NewController(s)
 )
 

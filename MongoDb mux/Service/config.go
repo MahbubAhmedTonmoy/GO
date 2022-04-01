@@ -1,33 +1,33 @@
 package service
 
 import (
-	"fmt"
-	"log"
+	"os"
 
-	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
-	Port             string `mapstructure:"port"`
-	ConnectionString string `mapstructure:"connectionstring"`
-	DbName           string `mapstructure:"dbname"`
-	CollcetionName   string `mapstructure:"collectionname"`
+	Database struct {
+		Port             string `yaml:"port"`
+		ConnectionString string `yaml:"connectionString"`
+		DbName           string `yaml:"dbname"`
+		CollcetionName   string `yaml:"collectionName"`
+	} `yaml:"database"`
 }
 
-var AppConfig *Config
 
-func LoadAppConfig() {
-	fmt.Println("Loading Server Configurations...")
-	viper.AddConfigPath("./")
-	viper.SetConfigName("config")
-	viper.SetConfigType("json")
-	err := viper.ReadInConfig()
+func NewConfig(configFile string) (*Config, error) {
+	file, err := os.Open(configFile)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	err = viper.Unmarshal(&AppConfig)
+	defer file.Close()
+	cfg := &Config{}
+	yd := yaml.NewDecoder(file)
+	err = yd.Decode(cfg)
+
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	fmt.Println(*AppConfig)
+	return cfg, nil
 }

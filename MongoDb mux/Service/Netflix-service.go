@@ -25,18 +25,14 @@ type netflixService struct {
 	collection *mongo.Collection
 }
 
-const ConnectionString = "mongodb://localhost:27017"
-const dbName = "netflix"
-const collcetionName = "watchlist"
-
-func NewNetflixService() NetflixService {
+func NewNetflixService(ConnectionString string, dbName string, collectionName string) NetflixService {
 	clientOption := options.Client().ApplyURI(ConnectionString)
 	client, err := mongo.Connect(context.TODO(), clientOption)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("MongoDB connection success")
-	collection_ := client.Database(dbName).Collection(collcetionName)
+	collection_ := client.Database(dbName).Collection(collectionName)
 	fmt.Println("collection instance is ready")
 	return &netflixService{
 		collection: collection_,
