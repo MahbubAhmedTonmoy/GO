@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	model "go-rest-api-db/Model"
 	service "go-rest-api-db/Service"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type NetflixController interface {
@@ -16,6 +18,7 @@ type NetflixController interface {
 	Update(w http.ResponseWriter, r *http.Request)
 	Delete(w http.ResponseWriter, r *http.Request)
 	DeleteAll(w http.ResponseWriter, r *http.Request)
+	Test(w http.ResponseWriter, r *http.Request)
 }
 
 type netflixController struct {
@@ -76,4 +79,16 @@ func (c *netflixController) Delete(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	s.Delete(params["id"])
 	json.NewEncoder(w).Encode(params["id"])
+}
+
+func (c *netflixController) Test(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencode")
+	w.Header().Set("Allow-Control-Allow-Methods", "POST")
+	//params := mux.Vars(r)
+	filter := bson.M{"author.name": "mahbub"}
+	result, err := s.Count(filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	json.NewEncoder(w).Encode(result)
 }

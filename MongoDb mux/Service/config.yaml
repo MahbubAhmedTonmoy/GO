@@ -2,4 +2,4 @@ database:
   connectionString: "mongodb://localhost:27017"
   dbname : "netflix"
   collectionName : "watchlist"
-  port": 8080
+  port : 8080

@@ -1,0 +1,13 @@
+database:
+  connectionString: "sqlserver://localhost:49152?database=master&trusted+connection=yes"
+redis:
+  addr: "localhost:6379"
+  password: ""
+  db: 0
+mail: 
+  smtpHost: "smtp.gmail.com"
+  smtpPort: 587
+  senderEmail: "ahmedmahbub35@gmail.com"
+  password: "123"
+jwt:
+  secretKey: "12344"

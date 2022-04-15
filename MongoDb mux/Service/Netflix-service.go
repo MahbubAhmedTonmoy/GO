@@ -3,9 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
-	model "go-rest-api-db/Model"
 	"log"
-	"reflect"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -21,6 +19,7 @@ type NetflixService interface {
 	DeleteAll() int64
 	GetAllMovie() []primitive.M
 	GetMovie(movieId string) primitive.M
+	Count(filteringQuery interface{}) (int64, error) 
 }
 
 type netflixService struct {
@@ -55,15 +54,20 @@ func NewNetflixService(ConnectionString string, dbName string, collectionName st
 // }
 
 func (s *netflixService) Insert(m interface{}) {
-	T := reflect.TypeOf(m)
-	switch T {
-	case reflect.TypeOf(model.Netflix{}):
-		result, err := s.collection.InsertOne(context.Background(), m)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println("Inserted 1 movie in db with id: ", result.InsertedID)
+	result, err := s.collection.InsertOne(context.Background(), m)
+	if err != nil {
+		log.Fatal(err)
 	}
+	fmt.Println("Inserted 1 movie in db with id: ", result.InsertedID)
+	//T := reflect.TypeOf(m)
+	// switch T {
+	// case reflect.TypeOf(model.Netflix{}):
+	// 	result, err := s.collection.InsertOne(context.Background(), m)
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// 	fmt.Println("Inserted 1 movie in db with id: ", result.InsertedID)
+	// }
 }
 
 func (s *netflixService) Update(movieId string) {
@@ -122,4 +126,9 @@ func (s *netflixService) GetMovie(movieId string) primitive.M {
 	var movie primitive.M
 	result.Decode(&movie)
 	return movie
+}
+
+func (s *netflixService) Count(filteringQuery interface{}) (int64, error) {
+	result, err := s.collection.CountDocuments(context.Background(), filteringQuery)
+	return result, err
 }
